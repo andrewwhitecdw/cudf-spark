@@ -177,7 +177,7 @@ object RapidsPluginUtils extends Logging {
     }.groupBy(_._1).mapValues(_.map(_._2)).toMap
     lazy val rapidsJarsVersMsg = revisionMap.map {
       case (revision, urls) => {
-        s"revison: $revision" + urls.map {
+        s"revision: $revision" + urls.map {
           url => "\n\tjar URL: " + url.toString.split("!").head + "\n\t" +
               scala.io.Source.fromURL(url).getLines().toSeq.mkString("\n\t")
         }.mkString + "\n"
