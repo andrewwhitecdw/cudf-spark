@@ -2227,16 +2227,25 @@ case class GpuStringInstr(str: Expression, substr: Expression)
   override def right: Expression = substr
 
   override def doColumnar(lhs: GpuColumnVector, rhs: GpuScalar): ColumnVector = {
-    withResource(lhs.getBase.stringLocate(rhs.getBase)) { strLocateRes =>
-      withResource(Scalar.fromInt(1)) { sv1 =>
-        strLocateRes.add(sv1)
+    if (!rhs.isValid) {
+      // Spark instr returns null when the substring is null.
+      GpuColumnVector.columnVectorFromNull(lhs.getRowCount.toInt, IntegerType)
+    } else {
+      withResource(lhs.getBase.stringLocate(rhs.getBase)) { strLocateRes =>
+        withResource(Scalar.fromInt(1)) { sv1 =>
+          strLocateRes.add(sv1)
+        }
       }
     }
   }
 
   override def doColumnar(numRows: Int, lhs: GpuScalar, rhs: GpuScalar): ColumnVector = {
-    withResource(GpuColumnVector.from(lhs, numRows)) { expandedLhs =>
-      doColumnar(expandedLhs, rhs)
+    if (!lhs.isValid || !rhs.isValid) {
+      GpuColumnVector.columnVectorFromNull(numRows, IntegerType)
+    } else {
+      withResource(GpuColumnVector.from(lhs, numRows)) { expandedLhs =>
+        doColumnar(expandedLhs, rhs)
+      }
     }
   }
 }
