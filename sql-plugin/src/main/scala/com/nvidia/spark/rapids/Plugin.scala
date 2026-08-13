@@ -106,7 +106,7 @@ object RapidsPluginUtils extends Logging {
     sparkRapidsBuildInfo = loadProps(PLUGIN_PROPS_FILENAME),
     sparkRapidsJniBuildInfo = loadProps(JNI_PROPS_FILENAME),
     cudfBuildInfo = loadProps(CUDF_PROPS_FILENAME),
-    sparkRapidsPrivateBuildInfo =loadProps(PRIVATE_PROPS_FILENAME)
+    sparkRapidsPrivateBuildInfo = loadProps(PRIVATE_PROPS_FILENAME)
   )
 
   {
